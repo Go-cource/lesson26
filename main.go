@@ -34,7 +34,15 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{
 			"Status": "Ok!",
 		})
+	})
 
+	r.PUT("/users/:name", func(c *gin.Context) {
+		name := c.Param("name")
+		c.String(http.StatusOK, "Changed, %s!", name)
+	})
+	r.DELETE("/users/:name", func(c *gin.Context) {
+		name := c.Param("name")
+		c.String(http.StatusOK, "Deleted, %s!", name)
 	})
 
 	r.Run(":8080")
