@@ -1,4 +1,8 @@
-package main
+// Package newGin реализует демонстрационный веб-сервер на Gin.
+//
+// Этот проект создан для учебных целей, чтобы показать слушателям
+// основы работы с фреймворком Gin.
+package newGin
 
 import (
 	"fmt"
@@ -7,6 +11,21 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// PORT определяет порт, на котором запускается приложение.
+const PORT = ":8080"
+
+// User описывает структуру пользователя.
+type User struct {
+	Name  string // Имя пользователя
+	Email string // Email пользователя
+}
+
+// LoggingAllRequests возвра middleware для логирования всех входящих запросов.
+//
+// Middleware выводит в консоль метод и путь каждого запроса.
+//
+// BUG(Дмитрий Веревкин): Эта функция избыточна, так как Gin предоставляет встроенное логирование.
+// BUG(Сергей): Пожалуйста, не используйте мое имя в примерах ошибок.
 func LoggingAllRequests() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		fmt.Println("New Request: ", c.Request.Method, c.Request.URL.Path)
@@ -14,7 +33,13 @@ func LoggingAllRequests() gin.HandlerFunc {
 	}
 }
 
-func main() {
+// PrintHello выводит приветствие в консоль.
+func PrintHello() {
+	fmt.Println("Hello!")
+}
+
+// newGin - главная функция.
+func newGin() {
 	r := gin.Default()
 
 	r.Use(LoggingAllRequests())
@@ -31,10 +56,6 @@ func main() {
 	})
 
 	r.POST("/user", func(c *gin.Context) {
-		type User struct {
-			Name  string
-			Email string
-		}
 		var user User
 
 		if err := c.ShouldBindJSON(&user); err != nil {
@@ -55,5 +76,5 @@ func main() {
 		c.String(http.StatusOK, "Deleted, %s!", name)
 	})
 
-	r.Run(":8080")
+	r.Run(PORT)
 }
