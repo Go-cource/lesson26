@@ -1,80 +1,48 @@
-// Package newGin реализует демонстрационный веб-сервер на Gin.
-//
-// Этот проект создан для учебных целей, чтобы показать слушателям
-// основы работы с фреймворком Gin.
-package newGin
+package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-// PORT определяет порт, на котором запускается приложение.
-const PORT = ":8080"
+// @title Пример API на Gin с Swagger
+// @version 1.0
+// @description Это пример API, созданный с использованием Gin и Swagger-аннотаций.
+// @host localhost:8080
+// @BasePath /
 
-// User описывает структуру пользователя.
-type User struct {
-	Name  string // Имя пользователя
-	Email string // Email пользователя
+// Структура для ответа
+type MessageResponse struct {
+	Message string
 }
 
-// LoggingAllRequests возвра middleware для логирования всех входящих запросов.
-//
-// Middleware выводит в консоль метод и путь каждого запроса.
-//
-// BUG(Дмитрий Веревкин): Эта функция избыточна, так как Gin предоставляет встроенное логирование.
-// BUG(Сергей): Пожалуйста, не используйте мое имя в примерах ошибок.
-func LoggingAllRequests() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		fmt.Println("New Request: ", c.Request.Method, c.Request.URL.Path)
-		c.Next()
-	}
+// @Summary Получить приветственное сообщение
+// @Description Возвращает простое приветствие в формате JSON
+// @Tags пример
+// @Produce json
+// @Success 200 {object} MessageResponse
+// @Router /hello [get]
+func helloHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, MessageResponse{Message: "Привет, мир!"})
 }
 
-// PrintHello выводит приветствие в консоль.
-func PrintHello() {
-	fmt.Println("Hello!")
+// @Summary Получить список пользователей
+// @Description Возвращает список пользователей
+// @Tags пример
+// @Produce json
+// @Success 200 {array} string
+// @Router /users [get]
+func usersHandler(c *gin.Context) {
+	users := []string{"Алиса", "Боб", "Чарли"}
+	c.JSON(http.StatusOK, users)
 }
 
-// newGin - главная функция.
-func newGin() {
+func main() {
 	r := gin.Default()
 
-	r.Use(LoggingAllRequests())
+	r.GET("/hello", helloHandler)
+	r.GET("/users", usersHandler)
 
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"Name": "Sergey",
-			"Age":  66,
-		})
-	})
-	r.GET("/user/:name", func(c *gin.Context) {
-		name := c.Param("name")
-		c.String(http.StatusOK, "Hello, %s!", name)
-	})
-
-	r.POST("/user", func(c *gin.Context) {
-		var user User
-
-		if err := c.ShouldBindJSON(&user); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{
-			"Status": "Ok!",
-		})
-	})
-
-	r.PUT("/users/:name", func(c *gin.Context) {
-		name := c.Param("name")
-		c.String(http.StatusOK, "Changed, %s!", name)
-	})
-	r.DELETE("/users/:name", func(c *gin.Context) {
-		name := c.Param("name")
-		c.String(http.StatusOK, "Deleted, %s!", name)
-	})
-
-	r.Run(PORT)
+	r.Run() // по умолчанию на :8080
 }

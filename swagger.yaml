@@ -1,0 +1,43 @@
+basePath: /
+definitions:
+  main.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Это пример API, созданный с использованием Gin и Swagger-аннотаций.
+  title: Пример API на Gin с Swagger
+  version: "1.0"
+paths:
+  /hello:
+    get:
+      description: Возвращает простое приветствие в формате JSON
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.MessageResponse'
+      summary: Получить приветственное сообщение
+      tags:
+      - пример
+  /users:
+    get:
+      description: Возвращает список пользователей
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+      summary: Получить список пользователей
+      tags:
+      - пример
+swagger: "2.0"
