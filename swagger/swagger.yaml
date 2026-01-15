@@ -1,0 +1,78 @@
+definitions:
+  main.Credo:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает стандартное приветственное сообщение "Hello, World!!"
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: Успешный ответ с приветствием
+          schema:
+            type: string
+      summary: Базовое приветствие
+      tags:
+      - Общие
+  /auth:
+    post:
+      consumes:
+      - application/json
+      description: Авторизует пользователя по email и паролю, возвращает токен доступа
+      parameters:
+      - description: Данные для аутентификации
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/main.Credo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешная аутентификация
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Некорректные данные
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Аутентификация пользователя
+      tags:
+      - auth
+  /user/{name}:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает персональное приветствие по имени
+      parameters:
+      - description: Имя пользователя
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: Приветственное сообщение
+          schema:
+            type: string
+      summary: Приветствие пользователя
+      tags:
+      - Пользователи
+swagger: "2.0"

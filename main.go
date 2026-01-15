@@ -3,24 +3,26 @@
 // Это занятие №26 на курсе ЦДО МГТУ им.Баумана. Мы учимся документировать проекты
 // Запуск go run main.go
 // Запуск клиента --------
-package ginModule
+package main
 
 import (
 	"fmt"
+	_ "lesson26/swagger"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // indexHandler - это ручка для вывода "Hello, World!!"
 // Чтобы обратиться перейдите http://127.0.0.1:8080/
-//
 // @Summary      Базовое приветствие
 // @Description  Возвращает стандартное приветственное сообщение "Hello, World!!"
 // @Tags         Общие
 // @Accept       json
 // @Produce      plain
-// @Success      200  {object}  MessageResponse  "Успешный ответ с приветствием"
+// @Success      200  {string} string   "Успешный ответ с приветствием"
 // @Router       / [get]
 func IndexHandler(c *gin.Context) {
 	c.String(http.StatusOK, "Hello, World!!")
@@ -79,6 +81,8 @@ func main() {
 	r.GET("/", IndexHandler)
 	r.GET("/user/:name", HelloUser)
 	r.POST("/auth", AuthHandler)
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.Run(":8080")
 }
